@@ -42,6 +42,32 @@ function getTaskById(id) {
   return tasks.find((t) => t.id === id) || null;
 }
 
+function updateTask(id, changes) {
+  const task = getTaskById(id);
+  if (!task) {
+    throw new Error('Tâche introuvable');
+  }
+  if ('title' in changes) {
+    if (!changes.title || changes.title.trim() === '') {
+      throw new Error('Le titre est obligatoire');
+    }
+    task.title = changes.title.trim();
+  }
+  if ('priority' in changes) {
+    if (!PRIORITES_AUTORISEES.includes(changes.priority)) {
+      throw new Error(`Priorité invalide : ${changes.priority}`);
+    }
+    task.priority = changes.priority;
+  }
+  if ('dueDate' in changes) {
+    if (changes.dueDate !== null && isNaN(Date.parse(changes.dueDate))) {
+      throw new Error('Date d\'échéance invalide');
+    }
+    task.dueDate = changes.dueDate;
+  }
+  return task;
+}
+
 function completeTask(id) {
   const task = getTaskById(id);
   if (!task) {
@@ -62,13 +88,21 @@ function countLateTasks(now = new Date()) {
   return tasks.filter((t) => isLate(t, now)).length;
 }
 
+function filterByStatus(status) {
+  if (status === 'terminee') return tasks.filter((t) => t.done);
+  if (status === 'en-cours') return tasks.filter((t) => !t.done);
+  throw new Error(`Statut inconnu : ${status}`);
+}
+
 module.exports = {
   PRIORITES_AUTORISEES,
   resetTasks,
   createTask,
   getTasks,
   getTaskById,
+  updateTask,
   completeTask,
   isLate,
   countLateTasks,
+  filterByStatus,
 };
