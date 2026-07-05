@@ -84,3 +84,38 @@ describe('taskService - tâches en retard', () => {
     expect(taskService.countLateTasks(now)).toBe(2);
   });
 });
+
+describe('taskService - modification et filtres', () => {
+  beforeEach(() => {
+    taskService.resetTasks();
+  });
+
+  test('modifier le titre d\'une tâche fonctionne', () => {
+    const task = taskService.createTask({ title: 'Ancien titre' });
+    const updated = taskService.updateTask(task.id, { title: 'Nouveau titre' });
+    expect(updated.title).toBe('Nouveau titre');
+  });
+
+  test('modifier une tâche inexistante lève une erreur', () => {
+    expect(() => taskService.updateTask(999, { title: 'Test' })).toThrow('Tâche introuvable');
+  });
+
+  test('vider le titre lors d\'une modification est refusé', () => {
+    const task = taskService.createTask({ title: 'Titre valide' });
+    expect(() => taskService.updateTask(task.id, { title: '' })).toThrow('Le titre est obligatoire');
+  });
+
+  test('filterByStatus("terminee") ne renvoie que les tâches terminées', () => {
+    taskService.createTask({ title: 'En cours' });
+    const done = taskService.createTask({ title: 'Finie' });
+    taskService.completeTask(done.id);
+
+    const result = taskService.filterByStatus('terminee');
+    expect(result).toHaveLength(1);
+    expect(result[0].title).toBe('Finie');
+  });
+
+  test('filterByStatus avec un statut inconnu lève une erreur', () => {
+    expect(() => taskService.filterByStatus('archivee')).toThrow('Statut inconnu : archivee');
+  });
+});
