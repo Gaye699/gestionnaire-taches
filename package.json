@@ -1,0 +1,23 @@
+{
+  "name": "gestionnaire-taches",
+  "version": "1.0.0",
+  "description": "Mini-projet Qualité logicielle & tests - Gestionnaire de tâches (TDD)",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "test": "jest --testPathPattern=tests",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration"
+  },
+  "keywords": ["tdd", "tests", "qualite"],
+  "author": "Abdoulaye Gaye",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
+}
