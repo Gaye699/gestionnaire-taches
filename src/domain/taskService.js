@@ -42,10 +42,33 @@ function getTaskById(id) {
   return tasks.find((t) => t.id === id) || null;
 }
 
+function completeTask(id) {
+  const task = getTaskById(id);
+  if (!task) {
+    throw new Error('Tâche introuvable');
+  }
+  task.done = true;
+  return task;
+}
+
+// Une tâche est en retard si sa date d'échéance est passée ET qu'elle n'est pas terminée.
+function isLate(task, now = new Date()) {
+  if (task.done) return false;
+  if (!task.dueDate) return false;
+  return new Date(task.dueDate) < now;
+}
+
+function countLateTasks(now = new Date()) {
+  return tasks.filter((t) => isLate(t, now)).length;
+}
+
 module.exports = {
   PRIORITES_AUTORISEES,
   resetTasks,
   createTask,
   getTasks,
   getTaskById,
+  completeTask,
+  isLate,
+  countLateTasks,
 };
